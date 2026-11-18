@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I love NY — Paula Girona</title>
+  <link rel="stylesheet" href="addison.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+    rel="stylesheet">
+</head>
+
+<!--
+  SCROLL MECHANIC
+  ───────────────
+  The page has a hidden #scroll-runway that provides scroll height.
+  #viewport-panel is position:fixed — the user always sees the same frame.
+
+  JS drives two transforms on each scroll event:
+
+    LEFT  (text)   → translateY(-progress × leftTravel)
+      Starts at 0, ends at −leftTravel. Moves UP. Reveals text top→bottom.
+
+    RIGHT (images) → translateY(rightTravel × (progress − 1))
+      Starts at −rightTravel (bottom images visible). Ends at 0 (first image).
+      Appears to move DOWN. Reveals images bottom→top.
+
+  progress = scrollY / scrollMax
+  scrollMax = max(leftTravel, rightTravel)
+
+  Because leftTravel < rightTravel, text moves proportionally slower.
+  Both start and finish at exactly progress 0 and 1.
+-->
+
+<body class="portfolio-page">
+
+  <!-- Scroll runway: provides the page's scrollable height. JS sets its height. -->
+  <div id="scroll-runway"></div>
+
+  <!-- Fixed viewport: everything the user sees -->
+  <div id="viewport-panel">
+
+    <header class="portfolio-header">
+      <div class="nav-left">
+        <a href="../../index.html" class="logo" aria-label="Home">
+          <img src="../../decor/logo.gif" alt="Home">
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../../index.html" class="nav-link">New</a>
+        <a href="../../index.html#work" class="nav-link nav-link--active">Work</a>
+        <a href="../../about.html" class="nav-link">About</a>
+      </div>
+      <div class="nav-right">
+        <a href="../../about.html#contact" class="nav-link">Contact</a>
+        <a href="../../about.html" aria-label="About me"><img src="../../decor/me.gif" alt="About me" class="nav-me"></a>
+      </div>
+    </header>
+
+    <div class="dual-columns">
+
+      <!-- LEFT: text scrolls UP -->
+      <div class="col col--left" id="col-left">
+        <div class="col-inner" id="left-inner">
+
+          <div class="project-intro">
+            <h1>I love NY</h1>
+            <p class="year">2026</p>
+            <p class="category">Animation Video</p>
+            <p class="credits">Brand Identity / Animation / Art Direction / Client project</p>
+            <p class="description-sub">An audiovisual piece for the intro to Adisson Rae´s concert<br>
+              Role: Designer. Identity and launch visuals.</p>
+          </div>
+
+          <nav class="sidebar-nav">
+            <a href="#overview" class="nav-link active">Overview</a>
+            <a href="#the-idea" class="nav-link">The idea</a>
+            <a href="#concept" class="nav-link">Bringing the concept to life</a>
+            <a href="#final-result" class="nav-link">Final result</a>
+          </nav>
+
+          <div class="text-sections">
+            <section class="content-section" id="overview">
+              <h3>OVERVIEW</h3>
+              <p>A promotional motion graphics video inspired by Addison Rae's
+                playful and unconventional visual identity. The idea was to translate her music into a fast-paced visual
+                experience, combining nostalgic internet aesthetics, bold typography, vibrant colors, and references to
+                pop culture.</p>
+            </section>
+
+            <section class="content-section" id="the-idea">
+              <h3>THE IDEA</h3>
+              <p> I wanted the video to feel spontaneous, energetic, and slightly chaotic, reflecting the artist's mix
+                of visual influences. Rather than following one consistent graphic style, I experimented with
+                contrasting typography, digital textures, neon colors, and vintage-inspired elements to create a visual
+                world that feels distinctly hers.</p>
+            </section>
+
+            <section class="content-section" id="concept">
+              <h3>BRINGING THE CONCEPT TO LIFE</h3>
+              <p>I explored ways to make typography interact with its surroundings instead of simply appearing on
+                screen. From animated billboards in New York to a dollar bill featuring the artist, each scene
+                transforms familiar objects and environments into part of the visual narrative. The transitions connect
+                these different worlds, following the rhythm of the music and keeping the composition constantly
+                evolving.</p>
+            </section>
+
+            <section class="content-section" id="final-result">
+              <h3>FINAL RESULT</h3>
+              <p>The result is an energetic promotional video that brings together motion graphics, visual storytelling,
+                and experimental design to capture the personality of the artist.</p>
+            </section>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: images start at bottom, move DOWN to reveal earlier images -->
+      <div class="col col--right" id="col-right">
+        <div class="col-inner" id="right-inner">
+
+          <div class="img-card">
+            <video src="adison.mp4" id="final-video" autoplay loop muted playsinline></video>
+          </div>
+          <div class="img-card"><img src="resum.png" alt="Addison Visual Summary"></div>
+          <div class="img-card"><img src="billboard.png" alt="Billboard"></div>
+          <div class="img-card">
+            <video src="disco.mp4" autoplay loop muted playsinline></video>
+          </div>
+          <div class="img-card"><img src="bill.png" alt="Dollar bill"></div>
+          <div class="img-card">
+            <video src="buildings.mp4" autoplay loop muted playsinline></video>
+          </div>
+          <div class="img-card"><img src="buildings.png" alt="Buildings"></div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="next-project-link">
+    <a href="../PAM/pam.html">(Next →)</a>
+  </div>
+
+  <!-- Video Lightbox Overlay -->
+  <div class="video-overlay" id="video-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="video-overlay-close" id="video-overlay-close" aria-label="Close video">x</button>
+    <video class="video-overlay-player" id="video-overlay-player" src="adison.mp4" controls playsinline></video>
+  </div>
+  <div class="video-overlay-backdrop" id="video-overlay-backdrop"></div>
+
+  <div class="cursor-badge" id="cursor-badge" aria-hidden="true">view final video</div>
+
+  <script src="addison.js"></script>
+</body>
+
+</html>

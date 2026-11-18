@@ -1,0 +1,569 @@
+/* addison.css
+   =========================================================
+   Fixed-viewport dual-column layout.
+   Scroll is provided by #scroll-runway (height set by JS).
+   Both column inners are driven entirely by translateY via JS.
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.portfolio-page {
+  background-color: #ffffff;
+  color: #1a1a1a;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  overflow-x: hidden;
+  /* overflow-y: auto — browser default, runway creates the scroll height */
+}
+
+/* ── Runway ───────────────────────────────────────────────
+   In normal flow. Invisible. Its only job is height.
+   JS sets: runway.style.height = (scrollMax + viewportH) + 'px' */
+#scroll-runway {
+  position: relative;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ── Viewport panel ───────────────────────────────────────
+   Fixed to screen. Never moves. Clips both columns. */
+#viewport-panel {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  will-change: opacity, filter, transform;
+  animation: pageEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    filter: blur(18px);
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
+  }
+}
+
+body.page-exit #viewport-panel,
+body.page-exit .next-project-link {
+  opacity: 0;
+  filter: blur(18px);
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+/* ── Header ───────────────────────────────────────────────*/
+.portfolio-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 88px;
+  background: linear-gradient(to bottom, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  pointer-events: none;
+}
+
+.portfolio-header a {
+  pointer-events: auto;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo img {
+  height: 56px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.22));
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 0 0 auto;
+  min-width: 80px;
+  justify-content: flex-end;
+}
+
+.nav-link {
+  font-family: var(--font-serif, 'Cormorant Garamond', 'EB Garamond', Georgia, serif);
+  font-size: 13px;
+  font-weight: 400;
+  color: #1a1a1a;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #1a1a1a;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link--active {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.nav-link--active::after {
+  display: none;
+}
+
+.nav-me {
+  height: 56px;
+  width: auto;
+  display: block;
+}
+
+/* ── Columns ──────────────────────────────────────────────*/
+.dual-columns {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  /* required: allows overflow:hidden to clip correctly */
+}
+
+.col {
+  overflow: hidden;
+  /* clips the inner content that travels outside bounds */
+  position: relative;
+}
+
+.col--left {
+  width: 42%;
+  padding: 6.5rem 3rem 2rem 4rem;
+}
+
+.col--right {
+  width: 58%;
+  padding: 6.5rem 6rem 2rem 3rem;
+}
+
+/* extra horizontal padding = narrower images */
+
+/* Inner containers — JS sets translateY on these */
+.col-inner {
+  will-change: transform;
+}
+
+#left-inner {
+  padding-bottom: 60vh;
+}
+
+#right-inner {
+  padding-bottom: 42vh;
+}
+
+/* ── Left column typography ───────────────────────────────*/
+.project-intro h1 {
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  font-size: 4.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.project-intro .year,
+.project-intro .category,
+.project-intro .credits,
+.project-intro .description-sub {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #444;
+  margin-bottom: 0.8rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 3rem 0;
+}
+
+.sidebar-nav .nav-link {
+  text-decoration: none;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  font-size: 1.8rem;
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+.sidebar-nav .nav-link.active,
+.sidebar-nav .nav-link:hover {
+  color: #1a1a1a;
+  font-style: italic;
+}
+
+.content-section {
+  margin-bottom: 6rem;
+}
+
+.content-section h3 {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.content-section p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+}
+
+/* ── Right column images ──────────────────────────────────*/
+.img-card {
+  width: 100%;
+  border-radius: 0;
+  /* Esquinas totalmente rectas sin redondeo */
+  overflow: hidden;
+  background: #e2dcd5;
+  margin-bottom: 1.25rem;
+}
+
+.img-card:last-child {
+  margin-bottom: 0;
+}
+
+.img-card img,
+.img-card video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Image Row (horizontal group) ─────────────────────────*/
+.img-row {
+  display: flex;
+  gap: 1.25rem;
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+
+.img-row:last-child {
+  margin-bottom: 0;
+}
+
+.img-row .img-card {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.img-row .img-card img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Floating dock ────────────────────────────────────────*/
+.floating-dock {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(230, 225, 218, 0.85);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  display: flex;
+  gap: 0.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.dock-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.dock-btn.active,
+.dock-btn:hover {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.next-project-link {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 4rem;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  font-size: 2.1rem;
+  z-index: 1000;
+  mix-blend-mode: difference;
+}
+
+.next-project-link a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* ── Video Lightbox & Cursor Badge ────────────────────────*/
+#final-video {
+  cursor: none;
+}
+
+.video-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(248, 247, 245, 0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.video-overlay-backdrop.visible {
+  opacity: 1;
+  pointer-events: all;
+  background: rgba(248, 247, 245, 0.92);
+  backdrop-filter: blur(6px);
+}
+
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.video-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.video-overlay-player {
+  max-width: 78vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  display: block;
+  box-shadow: 0 12px 56px rgba(0, 0, 0, 0.14);
+}
+
+.video-overlay-close {
+  position: fixed;
+  top: 2.4rem;
+  right: 3.6rem;
+  z-index: 2020;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  color: #6b6b6b;
+  padding: 0.4rem;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.video-overlay-close:hover {
+  color: #1a1a1a;
+  transform: rotate(90deg);
+}
+
+.cursor-badge {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.75rem;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.75);
+  transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cursor-badge.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ── Cute Star & Flower Cursor Trail ──────────────────────*/
+.cursor-spark {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 1.05rem;
+  color: #b8b5b2;
+  user-select: none;
+  transform: translate(-50%, -50%);
+  animation: sparkFloat 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes sparkFloat {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translate(-50%, -85%) scale(1.05) rotate(20deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -140%) scale(0.6) rotate(45deg);
+  }
+}
+
+/* ── Narrow desktop/tablet adjustments ───────────────────── */
+@media (max-width: 768px) and (min-width: 601px) {
+  .col--left {
+    padding: 6.5rem 2rem 2rem 2.5rem;
+  }
+  .col--right {
+    padding: 6.5rem 2.5rem 2rem 2rem;
+  }
+  .project-intro h1 {
+    font-size: 3.2rem;
+  }
+}
+
+/* ── Mobile fallback ──────────────────────────────────────
+   Below 600px: abandon fixed layout, stack naturally. */
+@media (max-width: 600px) {
+  .portfolio-header {
+    height: 70px;
+    padding: 0 16px;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-link {
+    font-size: 11px;
+  }
+
+  #scroll-runway {
+    display: none;
+  }
+
+  #viewport-panel {
+    position: static;
+    overflow: visible;
+  }
+
+  .dual-columns {
+    flex-direction: column;
+  }
+
+  .col--left,
+  .col--right {
+    width: 100%;
+    overflow: visible;
+    padding: 2rem;
+  }
+
+  .col--left {
+    padding-top: 6.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .col--right {
+    padding-top: 1rem;
+  }
+
+  #left-inner {
+    padding-bottom: 0;
+  }
+
+  #right-inner {
+    padding-bottom: 3rem;
+  }
+
+  .content-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .content-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .img-row {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Disable JS-driven transforms on mobile */
+  .col-inner {
+    transform: none !important;
+  }
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vinil — Paula Girona</title>
+  <link rel="stylesheet" href="../Addison/addison.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="portfolio-page">
+
+  <!-- Scroll runway: provides the page's scrollable height. JS sets its height. -->
+  <div id="scroll-runway"></div>
+
+  <!-- Fixed viewport: everything the user sees -->
+  <div id="viewport-panel">
+
+    <header class="portfolio-header">
+      <div class="nav-left">
+        <a href="../../index.html" class="logo" aria-label="Home">
+          <img src="../../decor/logo.gif" alt="Home">
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../../index.html" class="nav-link">New</a>
+        <a href="../../index.html#work" class="nav-link nav-link--active">Work</a>
+        <a href="../../about.html" class="nav-link">About</a>
+      </div>
+      <div class="nav-right">
+        <a href="../../about.html#contact" class="nav-link">Contact</a>
+        <a href="../../about.html" aria-label="About me"><img src="../../decor/me.gif" alt="About me"
+            class="nav-me"></a>
+      </div>
+    </header>
+
+    <div class="dual-columns">
+
+      <!-- LEFT: text scrolls UP -->
+      <div class="col col--left" id="col-left">
+        <div class="col-inner" id="left-inner">
+
+          <div class="project-intro">
+            <h1>4:23</h1>
+            <p class="year">2026</p>
+            <p class="category">Vinyl Packaging &amp; Art Direction</p>
+            <p class="credits">Packaging Design / 3D Visuals / Typography / Art Direction</p>
+            <p class="description-sub">Physical edition and visual ecosystem for a musical release.<br>
+              Role: Art Director &amp; Graphic Designer.</p>
+          </div>
+
+          <nav class="sidebar-nav">
+            <a href="#overview" class="nav-link active">Overview</a>
+            <a href="#the-idea" class="nav-link">The idea</a>
+            <a href="#concept" class="nav-link">Bringing the concept to life</a>
+            <a href="#final-result" class="nav-link">Final result</a>
+          </nav>
+
+          <div class="text-sections">
+            <section class="content-section" id="overview">
+              <h3>OVERVIEW</h3>
+              <p>
+                4:23 is a vinyl design project inspired by Artificial
+                Intelligence, a track from Mike Dean's album 4:23.
+                The project explores the relationship between technology
+                and human creativity, questioning whether artificial
+                intelligence can truly replicate the emotion and soul
+                behind human-made art.
+              </p>
+            </section>
+
+            <section class="content-section" id="the-idea">
+              <h3>THE IDEA</h3>
+              <p>
+                We wanted to translate the contrast between the artificial
+                and the human into a physical object. We approached the
+                two sides of the record as opposing worlds, each with
+                its own visual language.
+              </p>
+              <p>
+                Side A represents the artificial through a cold black-and-white
+                palette, geometric typography and lines that converge
+                like beams of light. Side B represents humanity through
+                an intimate photograph of skin, highlighting natural
+                textures and imperfections.
+              </p>
+            </section>
+
+            <section class="content-section" id="concept">
+              <h3>BRINGING THE CONCEPT TO LIFE</h3>
+              <p>
+                I wanted the vinyl itself to represent the human soul,
+                something intangible and hidden within the body.
+                That's why we placed it inside the packaging,
+                almost as if the sleeve were protecting something alive.
+              </p>
+              <p>
+                I modelled the vinyl in Blender, experimenting with
+                materials, transparency and lighting to achieve a
+                translucent blue finish. As light passes through
+                the surface, it creates soft, wave-like reflections,
+                giving the object an almost ethereal quality.
+              </p>
+            </section>
+
+            <section class="content-section" id="final-result">
+              <h3>FINAL RESULT</h3>
+              <p>
+                The final design brings together graphic design,
+                photography and 3D modelling to create a visual
+                dialogue between technology and humanity.
+              </p>
+              <p>
+                What I especially like about this project is how
+                the concept exists beyond the printed artwork.
+                The contrast between the two sides, the materials
+                and even the placement of the vinyl all contribute
+                to the same story. I wanted the design to feel
+                like an extension of the music, rather than
+                simply its packaging.
+              </p>
+            </section>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: images start at bottom, move DOWN to reveal earlier images -->
+      <div class="col col--right" id="col-right">
+        <div class="col-inner" id="right-inner">
+
+          <div class="img-card"><img src="shop.png" alt="Vinyl shop display"></div>
+          <div class="img-card"><img src="floor.png" alt="Vinyl floor layout"></div>
+          <div class="img-card"><img src="paper.png" alt="Vinyl paper insert"></div>
+          <div class="img-card"><img src="ball.png" alt="Vinyl ball visual"></div>
+          <div class="img-card"><img src="closeup.png" alt="Vinyl closeup"></div>
+          <div class="img-card"><img src="2.png" alt="Vinyl sleeve front"></div>
+          <div class="img-card"><img src="render1.png" alt="Vinyl 3D render"></div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="next-project-link">
+    <a href="../KTS/kts.html">(Next →)</a>
+  </div>
+
+  <script src="../Addison/addison.js"></script>
+</body>
+
+</html>
