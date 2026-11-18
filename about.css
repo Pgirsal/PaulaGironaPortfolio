@@ -1,0 +1,724 @@
+/* about.css — Editorial About Page with Oversized Scroll-Driven 3D Rack
+   ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #ffffff;
+  --ink: #141414;
+  --ink-muted: #525252;
+  --ink-faint: #8c8c8c;
+  --line: #e6e4e0;
+  --font-serif: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  --font-body: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1.7;
+  overflow-x: hidden;
+  animation: pageEnter 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+#main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 88px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.94) 50%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+#main-nav a {
+  pointer-events: auto;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.nav-logo img,
+.nav-me {
+  height: 56px;
+  width: auto;
+  display: block;
+}
+
+.nav-logo img {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.22));
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 0 0 auto;
+  min-width: 80px;
+  justify-content: flex-end;
+}
+
+.nav-link {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link--active {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.nav-link--active::after {
+  display: none;
+}
+
+/* ── Fixed Oversized 3D Rack Stage (Right Side) ─────────── */
+.rack-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+#about-rack-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+/* ── Left Editorial Column ──────────────────────────────── */
+.about-main {
+  position: relative;
+  z-index: 2;
+  width: min(52vw, 660px);
+  margin-left: clamp(2.5rem, 6vw, 6.5rem);
+  padding: 18vh 0 22vh;
+  pointer-events: none;
+}
+
+.story-step {
+  pointer-events: auto;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3.2rem 2.5rem 3.2rem 0;
+  border-top: 1px solid var(--line);
+  opacity: 0.22;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.94) 78%, rgba(255, 255, 255, 0) 100%);
+}
+
+.story-step:first-child {
+  border-top: none;
+  min-height: 80vh;
+  justify-content: center;
+}
+
+.story-step[data-step="03"] {
+  min-height: auto;
+  padding-bottom: 2.5rem;
+}
+
+.story-step[data-step="04"] {
+  min-height: auto;
+  padding-top: 2.2rem;
+  padding-bottom: 2.2rem;
+}
+
+.story-step[data-step="04"] .step-meta {
+  margin-bottom: 0.75rem;
+}
+
+.story-step.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.step-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 1.5rem;
+}
+
+.step-num {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+/* ── Typography ─────────────────────────────────────────── */
+.hero-copy h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.8rem, 6.2vw, 5.6rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.65rem;
+}
+
+.hero-copy h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink-muted);
+  line-height: 1.2;
+  margin-bottom: 2.2rem;
+}
+
+.hero-copy p,
+.editorial-block p {
+  font-size: 1.22rem;
+  color: var(--ink-muted);
+  margin-bottom: 1.35rem;
+  max-width: 54ch;
+}
+
+.hero-copy p.lead,
+.editorial-block p.lead-sm {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.3vw, 1.95rem);
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+
+.hero-copy strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.editorial-block h3,
+.cta-section h3 {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 3.8vw, 3.3rem);
+  font-weight: 400;
+  line-height: 1.08;
+  margin-bottom: 1.4rem;
+}
+
+/* ── GIF Accent ─────────────────────────────────────────── */
+.gif-divider {
+  margin-top: 1.8rem;
+}
+
+.gif-divider img {
+  height: 82px;
+  width: auto;
+  display: block;
+}
+
+/* ── Capabilities List ──────────────────────────────────── */
+.bring-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin-top: 0.5rem;
+}
+
+.bring-list li {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  align-items: baseline;
+}
+
+.list-idx {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35rem;
+  color: var(--ink);
+}
+
+.bring-list strong {
+  display: block;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 1.22rem;
+  margin-bottom: 0.25rem;
+}
+
+.bring-list p {
+  margin-bottom: 0;
+  font-size: 1.15rem;
+}
+
+/* ── Interactive 3-Fold Paper Resume ────────────────────── */
+.trifold-wrapper {
+  width: 100%;
+  max-width: 620px;
+  perspective: 1600px;
+  position: relative;
+  height: var(--panel-h, 292px);
+  transition: height 0.85s cubic-bezier(0.25, 1, 0.35, 1);
+  margin: 0.6rem 0 1.2rem;
+}
+
+.trifold-wrapper.is-unfolded {
+  height: calc(var(--paper-h, 875px) + 52px);
+}
+
+.trifold-paper {
+  width: 100%;
+  height: var(--paper-h, 875px);
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  outline: none;
+  transform: translateY(calc(-1 * var(--panel-h, 292px)))
+             perspective(1400px)
+             rotateX(var(--tilt-x, 0deg))
+             rotateY(var(--tilt-y, 0deg))
+             translateZ(var(--tilt-z, 0px));
+  transition: transform 0.85s cubic-bezier(0.25, 1, 0.35, 1), filter 0.4s ease;
+  filter: drop-shadow(var(--shadow-x, 0px) var(--shadow-y, 14px) 26px rgba(0, 0, 0, 0.13))
+          drop-shadow(0 2px 6px rgba(0, 0, 0, 0.05));
+  user-select: none;
+}
+
+/* When custom circular cursor badge is active */
+.trifold-paper.has-cursor-badge,
+.trifold-paper.has-cursor-badge * {
+  cursor: none !important;
+}
+
+.trifold-actions a {
+  cursor: pointer !important;
+}
+
+/* While hovered and tilting, disable CSS transition for 60/120fps direct responsive inertia */
+.trifold-wrapper:not(.is-unfolded).is-tilting .trifold-paper {
+  transition: none;
+}
+
+.trifold-wrapper:not(.is-unfolded):not(.is-tilting) .trifold-paper:hover {
+  transform: translateY(calc(-1 * var(--panel-h, 292px) - 6px)) perspective(1400px) rotateX(4deg) translateZ(8px);
+  filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.18)) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.07));
+}
+
+.trifold-wrapper.is-unfolded .trifold-paper {
+  transform: translateY(0) !important;
+  filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.10)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.04)) !important;
+  transition: transform 0.85s cubic-bezier(0.25, 1, 0.35, 1), filter 0.4s ease;
+}
+
+.trifold-panel {
+  width: 100%;
+  height: var(--panel-h, 292px);
+  position: absolute;
+  left: 0;
+  transform-style: preserve-3d;
+}
+
+.trifold-panel--top {
+  top: 0;
+  transform-origin: bottom center;
+  transform: rotateX(-179.9deg) translateZ(1px);
+  z-index: 10;
+  transition: transform 0.85s cubic-bezier(0.25, 1, 0.35, 1) 0.04s, z-index 0.01s 0.3s;
+}
+
+.trifold-panel--mid {
+  top: var(--panel-h, 292px);
+  z-index: 1;
+}
+
+.trifold-panel--bottom {
+  top: calc(var(--panel-h, 292px) * 2);
+  transform-origin: top center;
+  transform: rotateX(179.9deg);
+  z-index: 5;
+  transition: transform 0.75s cubic-bezier(0.25, 1, 0.35, 1);
+}
+
+/* Unfolded states */
+.trifold-wrapper.is-unfolded .trifold-panel--top {
+  transform: rotateX(0deg) translateZ(0);
+  z-index: 3;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.35, 1);
+}
+
+.trifold-wrapper.is-unfolded .trifold-panel--bottom {
+  transform: rotateX(0deg);
+  z-index: 2;
+  transition: transform 0.85s cubic-bezier(0.25, 1, 0.35, 1) 0.08s;
+}
+
+/* Panel faces */
+.panel-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.panel-face--front {
+  transform: rotateX(0deg);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.panel-face--back {
+  transform: rotateX(180deg);
+  overflow: hidden;
+  background: transparent;
+}
+
+.panel-crop {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.interior-img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.interior-img--top {
+  top: 0;
+}
+
+.interior-img--mid {
+  top: -100%;
+}
+
+.interior-img--bottom {
+  top: -200%;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.blank-paper-back {
+  width: 100%;
+  height: 100%;
+  background: #faf9f6;
+}
+
+/* Crease lines across folds */
+.fold-crease {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.fold-crease--top {
+  top: 0;
+  height: 3px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.09), transparent);
+}
+
+.fold-crease--bottom {
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.09), transparent);
+}
+
+/* Dynamic shadows during folding */
+.panel-shadow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 1;
+  transition: opacity 0.75s ease;
+}
+
+.panel-shadow--top {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.16), transparent 40%);
+}
+
+.panel-shadow--mid {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.12), transparent 25%),
+              linear-gradient(to top, rgba(0, 0, 0, 0.12), transparent 25%);
+}
+
+.panel-shadow--bottom {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.16), transparent 40%);
+}
+
+.trifold-wrapper.is-unfolded .panel-shadow {
+  opacity: 0;
+}
+
+/* Specular glare sheen on folded cover */
+.paper-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 65%);
+  opacity: var(--glare-opacity, 0);
+  transition: opacity 0.25s ease;
+  mix-blend-mode: overlay;
+  z-index: 2;
+}
+
+/* Actions when unfolded */
+.trifold-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: 1.2rem;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.trifold-wrapper.is-unfolded .trifold-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0.4s;
+}
+
+.trifold-link {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: opacity 0.2s ease, font-style 0.2s ease;
+}
+
+.trifold-link:hover {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* ── Call to Action ─────────────────────────────────────── */
+.cta-section {
+  min-height: auto;
+  padding-top: 2.8rem;
+  padding-bottom: 4rem;
+}
+
+.cta-section p {
+  font-size: 1.22rem;
+  color: var(--ink-muted);
+  margin-bottom: 2.2rem;
+  max-width: 48ch;
+}
+
+.cta-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid transparent;
+  transition: background-color 0.25s ease, color 0.25s ease, font-style 0.25s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--ink);
+  color: var(--bg);
+  font-style: italic;
+}
+
+.cta-or {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--ink-faint);
+}
+
+/* ── Floating Circular Cursor Badge (like Project Overlay) ── */
+.cursor-badge {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-style: italic;
+  line-height: 1.15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.2rem;
+  pointer-events: none;
+  z-index: 230;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.75);
+  transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cursor-badge.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ── Cute Star & Flower Cursor Trail ────────────────────── */
+.cursor-spark {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 1.05rem;
+  color: #b8b5b2;
+  user-select: none;
+  transform: translate(-50%, -50%);
+  animation: sparkFloat 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes sparkFloat {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translate(-50%, -85%) scale(1.05) rotate(20deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -140%) scale(0.6) rotate(45deg);
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  #main-nav {
+    height: 70px;
+    padding: 0 16px;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-link {
+    font-size: 11px;
+  }
+
+  .about-main {
+    width: 88vw;
+    margin: 0 auto;
+    padding: 14vh 0 16vh;
+  }
+
+  .story-step {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(4px);
+    padding: 2.5rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+}

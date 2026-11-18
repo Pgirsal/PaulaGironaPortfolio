@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Creative Direction &amp; Art</title>
+  <meta name="description"
+    content="An editorial portfolio of creative direction, photography, graphic design, and art. Explore projects through an interactive 3D postcard rack." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav id="main-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo" aria-label="Home">
+        <img src="decor/logo.gif" alt="Home" />
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link nav-link--active" id="nav-new">New</a>
+      <a href="#work" class="nav-link" id="nav-work">Work</a>
+      <a href="about.html" class="nav-link" id="nav-about">About</a>
+    </div>
+    <div class="nav-right">
+      <a href="about.html#contact" class="nav-link" id="nav-contact">Contact</a>
+      <a href="about.html" aria-label="About me"><img src="decor/me.gif" alt="About me" class="nav-me" /></a>
+    </div>
+  </nav>
+
+  <!-- Brand label -->
+  <div class="brand-label" id="brand-label" aria-hidden="true">SELECTED WORKS</div>
+
+  <!-- Main canvas area for 3D rack -->
+  <main id="main-content" role="main">
+    <canvas id="rack-canvas"
+      aria-label="Interactive 3D postcard display rack. Click and drag to rotate. Click a postcard to open the project."
+      tabindex="0"></canvas>
+    <div class="drag-hint" id="drag-hint">
+      <span>drag to explore</span>
+    </div>
+  </main>
+
+  <!-- Work Archive Grid View -->
+  <section class="work-archive" id="work-archive" aria-hidden="true">
+    <div class="work-archive-inner">
+      <div class="work-intro">
+        <p>Creative direction and visual consultancy at the intersection of design, music, and cinema—driven by cultural relevance and immersive world-building across identity, editorial, and motion.</p>
+      </div>
+
+      <div class="work-filters" id="work-filters" role="tablist" aria-label="Filter projects by category">
+        <button class="work-filter active" data-filter="All" type="button">All</button>
+        <button class="work-filter" data-filter="Visual identity" type="button">Visual identity</button>
+        <button class="work-filter" data-filter="Music" type="button">Music</button>
+        <button class="work-filter" data-filter="3D" type="button">3D</button>
+        <button class="work-filter" data-filter="Editorial" type="button">Editorial</button>
+        <button class="work-filter" data-filter="Fashion" type="button">Fashion</button>
+      </div>
+
+      <div class="work-grid" id="work-grid"></div>
+    </div>
+  </section>
+
+  <!-- Project overlay panel -->
+  <div class="project-overlay" id="project-overlay" role="dialog" aria-modal="true" aria-hidden="true"
+    aria-labelledby="overlay-title">
+    <button class="overlay-close" id="overlay-close" aria-label="Close project">x</button>
+    <div class="overlay-inner">
+      <img class="overlay-image" id="overlay-image" src="" alt="" />
+      <video class="overlay-image" id="overlay-video" src="" autoplay loop muted playsinline hidden></video>
+      <div class="overlay-meta">
+        <p class="overlay-index" id="overlay-index">01</p>
+        <h2 class="overlay-title" id="overlay-title"></h2>
+        <p class="overlay-desc" id="overlay-desc"></p>
+        <span class="overlay-tag" id="overlay-tag"></span>
+      </div>
+    </div>
+    <div class="cursor-badge" id="cursor-badge" aria-hidden="true">view full project</div>
+  </div>
+  <div class="overlay-backdrop" id="overlay-backdrop"></div>
+
+  <!-- Three.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="rack.js"></script>
+</body>
+
+</html>
