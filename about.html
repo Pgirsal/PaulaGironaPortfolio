@@ -23,7 +23,7 @@
       </a>
     </div>
     <div class="nav-links">
-      <a href="index.html" class="nav-link">New</a>
+      <a href="index.html" class="nav-link">Rack</a>
       <a href="index.html#work" class="nav-link">Work</a>
       <a href="about.html" class="nav-link nav-link--active">About</a>
     </div>
@@ -143,7 +143,7 @@
               <div class="panel-shadow panel-shadow--top"></div>
             </div>
             <div class="panel-face panel-face--back">
-              <img src="decor/resume.jpg" alt="Paula Girona" class="cover-img" draggable="false" />
+              <img src="decor/resume.png" alt="Paula Girona" class="cover-img" draggable="false" />
               <div class="paper-glare"></div>
             </div>
           </div>
@@ -184,6 +184,7 @@
             &darr; ]</a>
         </div>
       </div>
+      <p class="trifold-hint" id="trifold-hint">click to unfold</p>
     </section>
 
     <!-- 05 / Call to Action -->
@@ -205,7 +206,7 @@
   </main>
 
   <!-- Floating Circular Cursor Badge for Resume -->
-  <div class="cursor-badge" id="resume-cursor-badge" aria-hidden="true">unfold resume</div>
+  <div class="cursor-badge" id="resume-cursor-badge" aria-hidden="true">unfold cv</div>
 
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -227,7 +228,7 @@
         'me/mepink.JPG',
         'me/meplato.jpg',
         'me/Focal Length A.jpg',
-        'me/myname1.png',
+        'me/myname1.JPG',
         'me/merome.jpg',
       ];
 
@@ -583,19 +584,65 @@
       const trifoldPaper = document.getElementById('trifold-paper');
       const resumeBadge = document.getElementById('resume-cursor-badge');
 
+      function isOverResumeImage(e) {
+        if (!trifoldWrapper || !trifoldPaper) return false;
+
+        // Never show badge over action links or buttons
+        if (e.target && (e.target.closest('#trifold-actions') || e.target.closest('a') || e.target.closest('button'))) {
+          return false;
+        }
+
+        const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
+
+        if (!isUnfolded) {
+          const coverImg = trifoldPaper.querySelector('.cover-img');
+          if (!coverImg) return false;
+
+          // Must be hovering directly on the cover image or its direct face
+          const isDirect = (
+            e.target === coverImg ||
+            coverImg.contains(e.target) ||
+            Boolean(e.target.closest && e.target.closest('.panel-face--back'))
+          );
+          if (!isDirect) return false;
+
+          // Must also be strictly within the visual bounding rectangle
+          const r = coverImg.getBoundingClientRect();
+          return (
+            e.clientX >= r.left &&
+            e.clientX <= r.right &&
+            e.clientY >= r.top &&
+            e.clientY <= r.bottom
+          );
+        } else {
+          // Unfolded: must be over one of the panels displaying the interior resume image
+          if (!e.target || !e.target.closest) return false;
+          const panel = e.target.closest('.trifold-panel');
+          if (!panel || !trifoldPaper.contains(panel)) return false;
+
+          const r = trifoldPaper.getBoundingClientRect();
+          return (
+            e.clientX >= r.left &&
+            e.clientX <= r.right &&
+            e.clientY >= r.top &&
+            e.clientY <= r.bottom
+          );
+        }
+      }
+
       function updateResumeBadge(e) {
         if (!resumeBadge || !trifoldPaper || !trifoldWrapper) return;
-        resumeBadge.style.left = e.clientX + 'px';
-        resumeBadge.style.top = e.clientY + 'px';
 
-        // Check if mouse is over download link or interactive buttons
-        if (e.target.closest('#trifold-actions') || e.target.closest('a') || e.target.closest('button')) {
+        if (!isOverResumeImage(e)) {
           hideResumeBadge();
           return;
         }
 
+        resumeBadge.style.left = e.clientX + 'px';
+        resumeBadge.style.top = e.clientY + 'px';
+
         const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
-        resumeBadge.textContent = isUnfolded ? 'fold resume' : 'unfold resume';
+        resumeBadge.textContent = isUnfolded ? 'fold cv' : 'unfold cv';
         resumeBadge.classList.add('visible');
         trifoldPaper.classList.add('has-cursor-badge');
       }
@@ -633,7 +680,12 @@
 
         // Update badge text if active
         if (resumeBadge) {
-          resumeBadge.textContent = unfolded ? 'fold resume' : 'unfold resume';
+          resumeBadge.textContent = unfolded ? 'fold cv' : 'unfold cv';
+        }
+
+        const trifoldHint = document.getElementById('trifold-hint');
+        if (trifoldHint) {
+          trifoldHint.textContent = unfolded ? 'click to fold' : 'click to unfold';
         }
 
         // Give time for layout update then re-measure
@@ -748,59 +800,75 @@
       }
 
       if (trifoldWrapper && trifoldPaper) {
-        trifoldWrapper.addEventListener('mouseenter', (e) => {
-          updateResumeBadge(e);
-          if (trifoldWrapper.classList.contains('is-unfolded')) return;
-          isTilting = true;
-          trifoldWrapper.classList.add('is-tilting');
-          targetZ = 16;
-          targetGlareOpacity = 0.45;
-          startTiltLoop();
-        });
+        const coverImg = trifoldPaper.querySelector('.cover-img');
 
-        trifoldWrapper.addEventListener('mousemove', (e) => {
-          updateResumeBadge(e);
+        // Precision tracking across window:
+        window.addEventListener('mousemove', (e) => {
+          const onImage = isOverResumeImage(e);
 
-          if (trifoldWrapper.classList.contains('is-unfolded')) return;
-          const rect = trifoldWrapper.getBoundingClientRect();
-          if (rect.width === 0 || rect.height === 0) return;
+          if (onImage) {
+            updateResumeBadge(e);
 
-          isTilting = true;
-          trifoldWrapper.classList.add('is-tilting');
+            if (!trifoldWrapper.classList.contains('is-unfolded') && coverImg) {
+              const rect = coverImg.getBoundingClientRect();
+              if (rect.width > 0 && rect.height > 0) {
+                isTilting = true;
+                trifoldWrapper.classList.add('is-tilting');
 
-          // Normalized coordinates: -0.5 to 0.5
-          const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5));
-          const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5));
+                // Normalized coordinates: -0.5 to 0.5 based on exact image bounds
+                const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5));
+                const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5));
 
-          // 3D physics: cursor pulls paper towards it
-          targetRotX = -ny * 22; // Tilt down/up
-          targetRotY = nx * 26;  // Tilt right/left
-          targetZ = 16;
-          targetShadowX = -nx * 32;
-          targetShadowY = 16 - ny * 18;
-          targetGlareX = (nx + 0.5) * 100;
-          targetGlareY = (ny + 0.5) * 100;
-          targetGlareOpacity = 0.45;
+                // 3D physics: cursor pulls paper towards it
+                targetRotX = -ny * 22; // Tilt down/up
+                targetRotY = nx * 26;  // Tilt right/left
+                targetZ = 16;
+                targetShadowX = -nx * 32;
+                targetShadowY = 16 - ny * 18;
+                targetGlareX = (nx + 0.5) * 100;
+                targetGlareY = (ny + 0.5) * 100;
+                targetGlareOpacity = 0.45;
 
-          startTiltLoop();
-        });
-
-        trifoldWrapper.addEventListener('mouseleave', () => {
-          hideResumeBadge();
-          if (trifoldWrapper.classList.contains('is-unfolded')) return;
-          resetTilt();
-        });
+                startTiltLoop();
+              }
+            }
+          } else {
+            hideResumeBadge();
+            if (isTilting) {
+              resetTilt();
+            }
+          }
+        }, { passive: true });
 
         window.addEventListener('scroll', () => {
           hideResumeBadge();
+          if (isTilting) {
+            resetTilt();
+          }
         }, { passive: true });
+
+        document.addEventListener('mouseleave', () => {
+          hideResumeBadge();
+          if (isTilting) {
+            resetTilt();
+          }
+        });
 
         trifoldPaper.addEventListener('click', (e) => {
           // If clicking a link or button, don't toggle
           if (e.target.closest('a') || e.target.closest('button')) return;
+          // Only trigger unfold/fold if clicking directly on the resume image
+          if (!isOverResumeImage(e)) return;
+
           const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
           setTrifoldState(!isUnfolded);
-          updateResumeBadge(e);
+          setTimeout(() => {
+            if (isOverResumeImage(e)) {
+              updateResumeBadge(e);
+            } else {
+              hideResumeBadge();
+            }
+          }, 60);
         });
 
         trifoldPaper.addEventListener('keydown', (e) => {
@@ -810,6 +878,14 @@
             setTrifoldState(!isUnfolded);
           }
         });
+
+        const trifoldHint = document.getElementById('trifold-hint');
+        if (trifoldHint) {
+          trifoldHint.addEventListener('click', () => {
+            const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
+            setTrifoldState(!isUnfolded);
+          });
+        }
       }
     })();
   </script>

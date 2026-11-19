@@ -418,6 +418,15 @@ body {
 }
 
 /* Unfolded states */
+.trifold-wrapper:not(.is-unfolded) .trifold-panel--mid,
+.trifold-wrapper:not(.is-unfolded) .trifold-panel--bottom {
+  pointer-events: none;
+}
+
+.trifold-wrapper.is-unfolded .trifold-panel {
+  pointer-events: auto;
+}
+
 .trifold-wrapper.is-unfolded .trifold-panel--top {
   transform: rotateX(0deg) translateZ(0);
   z-index: 3;
@@ -484,7 +493,7 @@ body {
 .cover-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
@@ -590,6 +599,10 @@ body {
 .trifold-link:hover {
   font-style: italic;
   opacity: 0.7;
+}
+
+.trifold-hint {
+  display: none;
 }
 
 /* ── Call to Action ─────────────────────────────────────── */
@@ -720,5 +733,49 @@ body {
     backdrop-filter: blur(4px);
     padding: 2.5rem 1.5rem;
     margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-left {
+    display: none !important;
+  }
+
+  .nav-logo,
+  .nav-me,
+  a[aria-label="About me"] {
+    display: none !important;
+  }
+
+  .nav-right {
+    min-width: auto !important;
+  }
+
+  .nav-links {
+    gap: 1.8rem;
+    justify-content: flex-start;
+  }
+
+  .nav-link {
+    font-size: 1.15rem;
+  }
+
+  .trifold-hint {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--ink-faint);
+    text-align: center;
+    max-width: 620px;
+    margin: 0.75rem 0 0;
+    letter-spacing: 0.02em;
+    user-select: none;
+    cursor: pointer;
+    transition: opacity 0.25s ease, color 0.25s ease;
+  }
+
+  .trifold-hint:active {
+    color: var(--ink);
   }
 }

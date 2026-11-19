@@ -71,7 +71,7 @@
       desc: 'Visual direction and fashion editorial inspired by Mugler\'s sculptural silhouettes and theatrical energy.',
       tag: '3D · Fashion · 2026',
       categories: ['3D', 'Fashion'],
-      image: 'works/7.png',
+      image: 'works/7.Webp',
       link: 'works/mugler/mugler.html',
     },
     {
@@ -107,7 +107,7 @@
       desc: 'Visual study on rhythm, form, and typographic contrast inspired by modernist title sequences.',
       tag: 'Visual identity · 2026',
       categories: ['Visual identity'],
-      image: 'works/11.PNG',
+      image: 'works/11.webp',
       link: 'works/Bass/bass.html',
     },
     {
@@ -132,19 +132,19 @@
 
   /* 12 cards for the 3D rotating rack
      Image 12.png (KTS) is at slot 4, image 4.png (Silhouette) is at slot 12
-     Image 11.PNG (Bass) is at slot 6, image 6.png (PAM) is at slot 11 */
+     Image 11.webp (Bass) is at slot 6, image 6.png (PAM) is at slot 11 */
   const RACK_PROJECTS = [
     PROJECTS[0],  // 1.gif (Addison)
     PROJECTS[1],  // 13.png (Weird)
     PROJECTS[2],  // 3.png (Marvão)
     PROJECTS[3],  // 12.png (KTS) — switched with 4.png on rack
     PROJECTS[4],  // 5.png (4:23)
-    PROJECTS[10], // 11.PNG (Bass) — switched with 6.png on rack
-    PROJECTS[6],  // 7.png (Mugler)
+    PROJECTS[10], // 11.webp (Bass) — switched with 6.png on rack
+    PROJECTS[6],  // 7.Webp (Mugler)
     PROJECTS[7],  // 8.PNG (Dior)
     PROJECTS[8],  // 9.PNG (LUV Magazine)
     PROJECTS[9],  // 10.png (Collage)
-    PROJECTS[5],  // 6.png (PAM) — switched with 11.PNG on rack
+    PROJECTS[5],  // 6.png (PAM) — switched with 11.webp on rack
     comingSoonProject, // 4.png (Silhouette) — Coming soon...
   ];
 
@@ -323,8 +323,73 @@
     return arm;
   }
 
+  /* ─── PRELOADER MANAGER ─────────────────────────────────────*/
+  const loaderEl = document.getElementById('page-loader');
+  const loaderFill = document.getElementById('loader-fill');
+  const loaderCounter = document.getElementById('loader-counter');
+
+  let minTimeElapsed = false;
+  let allDone = false;
+  let windowLoaded = document.readyState === 'complete';
+
+  if (!windowLoaded) {
+    window.addEventListener('load', () => {
+      windowLoaded = true;
+      tryDismiss();
+    });
+  }
+
+  function updateLoaderDisplay(progressPct) {
+    if (loaderFill) loaderFill.style.width = progressPct + '%';
+    if (loaderCounter) loaderCounter.textContent = String(Math.round(progressPct)).padStart(2, '0') + '%';
+  }
+
+  function dismissLoader() {
+    if (!loaderEl) return;
+    updateLoaderDisplay(100);
+    setTimeout(() => {
+      loaderEl.classList.add('loaded');
+      setTimeout(() => {
+        if (loaderEl.parentNode) loaderEl.parentNode.removeChild(loaderEl);
+      }, 900);
+    }, 220);
+  }
+
+  function tryDismiss() {
+    if (allDone && minTimeElapsed && (windowLoaded || document.readyState === 'complete')) {
+      dismissLoader();
+    }
+  }
+
+  // Minimum graceful duration: 800ms for a deliberate, elegant intro
+  setTimeout(() => {
+    minTimeElapsed = true;
+    tryDismiss();
+  }, 800);
+
+  // Safety fallback: if anything hangs, dismiss after 3.8s
+  setTimeout(() => {
+    if (loaderEl && !loaderEl.classList.contains('loaded')) {
+      dismissLoader();
+    }
+  }, 3800);
+
+  const loadingManager = new THREE.LoadingManager(
+    () => {
+      allDone = true;
+      tryDismiss();
+    },
+    (url, itemsLoaded, itemsTotal) => {
+      const pct = Math.min(98, Math.round((itemsLoaded / itemsTotal) * 100));
+      updateLoaderDisplay(pct);
+    },
+    (url) => {
+      console.warn('Failed to load texture:', url);
+    }
+  );
+
   /* ─── POSTCARD MESH ─────────────────────────────────────────*/
-  const textureLoader = new THREE.TextureLoader();
+  const textureLoader = new THREE.TextureLoader(loadingManager);
 
   function makeCardMat() {
     const mat = new THREE.MeshBasicMaterial({
