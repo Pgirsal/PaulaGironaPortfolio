@@ -229,7 +229,7 @@
         'me/meplato.jpg',
         'me/Focal Length A.jpg',
         'me/myname1.JPG',
-        'me/merome.jpg',
+        'me/merome.JPG',
       ];
 
       const canvas = document.getElementById('about-rack-canvas');
@@ -584,75 +584,74 @@
       const trifoldPaper = document.getElementById('trifold-paper');
       const resumeBadge = document.getElementById('resume-cursor-badge');
 
+      /* Hit-zone around the CV. Uses the wrapper's layout box (which is NOT
+         affected by the 3D tilt), so the zone never jumps around under the
+         cursor — this is what used to cause the flickering.
+         HOVER_PAD = extra space around the CV that still shows the badge.
+         EXIT_PAD  = slightly larger, so tiny jitters at the edge don't toggle it. */
+      const HOVER_PAD = 48;
+      const EXIT_PAD = 64;
+      let badgeActive = false;
+      let lastMouseX = -9999;
+      let lastMouseY = -9999;
+
+      function getResumeZone() {
+        const r = trifoldWrapper.getBoundingClientRect();
+        let bottom = r.bottom;
+        // When unfolded, exclude the download-link row under the paper
+        if (trifoldWrapper.classList.contains('is-unfolded')) {
+          const actions = document.getElementById('trifold-actions');
+          if (actions) {
+            const a = actions.getBoundingClientRect();
+            if (a.height > 0) bottom = Math.min(bottom, a.top);
+          }
+        }
+        return { left: r.left, right: r.right, top: r.top, bottom };
+      }
+
       function isOverResumeImage(e) {
         if (!trifoldWrapper || !trifoldPaper) return false;
 
         // Never show badge over action links or buttons
-        if (e.target && (e.target.closest('#trifold-actions') || e.target.closest('a') || e.target.closest('button'))) {
+        if (e.target && e.target.closest &&
+          (e.target.closest('#trifold-actions') || e.target.closest('a') || e.target.closest('button'))) {
           return false;
         }
 
-        const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
-
-        if (!isUnfolded) {
-          const coverImg = trifoldPaper.querySelector('.cover-img');
-          if (!coverImg) return false;
-
-          // Must be hovering directly on the cover image or its direct face
-          const isDirect = (
-            e.target === coverImg ||
-            coverImg.contains(e.target) ||
-            Boolean(e.target.closest && e.target.closest('.panel-face--back'))
-          );
-          if (!isDirect) return false;
-
-          // Must also be strictly within the visual bounding rectangle
-          const r = coverImg.getBoundingClientRect();
-          return (
-            e.clientX >= r.left &&
-            e.clientX <= r.right &&
-            e.clientY >= r.top &&
-            e.clientY <= r.bottom
-          );
-        } else {
-          // Unfolded: must be over one of the panels displaying the interior resume image
-          if (!e.target || !e.target.closest) return false;
-          const panel = e.target.closest('.trifold-panel');
-          if (!panel || !trifoldPaper.contains(panel)) return false;
-
-          const r = trifoldPaper.getBoundingClientRect();
-          return (
-            e.clientX >= r.left &&
-            e.clientX <= r.right &&
-            e.clientY >= r.top &&
-            e.clientY <= r.bottom
-          );
-        }
+        const pad = badgeActive ? EXIT_PAD : HOVER_PAD;
+        const z = getResumeZone();
+        return (
+          e.clientX >= z.left - pad &&
+          e.clientX <= z.right + pad &&
+          e.clientY >= z.top - pad &&
+          e.clientY <= z.bottom + pad
+        );
       }
 
+      /* Badge sits exactly on the cursor (same as index.html) and inflates in place */
       function updateResumeBadge(e) {
         if (!resumeBadge || !trifoldPaper || !trifoldWrapper) return;
-
-        if (!isOverResumeImage(e)) {
-          hideResumeBadge();
-          return;
-        }
 
         resumeBadge.style.left = e.clientX + 'px';
         resumeBadge.style.top = e.clientY + 'px';
 
-        const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
-        resumeBadge.textContent = isUnfolded ? 'fold cv' : 'unfold cv';
-        resumeBadge.classList.add('visible');
-        trifoldPaper.classList.add('has-cursor-badge');
+        const label = trifoldWrapper.classList.contains('is-unfolded') ? 'fold cv' : 'unfold cv';
+        if (resumeBadge.textContent !== label) resumeBadge.textContent = label;
+
+        if (!badgeActive) {
+          badgeActive = true;
+          resumeBadge.classList.add('visible');
+          trifoldPaper.classList.add('has-cursor-badge');
+          document.body.classList.add('resume-badge-active');
+        }
       }
 
       function hideResumeBadge() {
-        if (!resumeBadge) return;
+        if (!resumeBadge || !badgeActive) return;
+        badgeActive = false;
         resumeBadge.classList.remove('visible');
-        if (trifoldPaper) {
-          trifoldPaper.classList.remove('has-cursor-badge');
-        }
+        if (trifoldPaper) trifoldPaper.classList.remove('has-cursor-badge');
+        document.body.classList.remove('resume-badge-active');
       }
 
       function updateTrifoldDimensions() {
@@ -802,20 +801,19 @@
       if (trifoldWrapper && trifoldPaper) {
         const coverImg = trifoldPaper.querySelector('.cover-img');
 
-        // Precision tracking across window:
-        window.addEventListener('mousemove', (e) => {
+        function handlePointer(e) {
           const onImage = isOverResumeImage(e);
 
           if (onImage) {
             updateResumeBadge(e);
 
             if (!trifoldWrapper.classList.contains('is-unfolded') && coverImg) {
-              const rect = coverImg.getBoundingClientRect();
+              // Stable (un-tilted) bounds so the tilt doesn't feed back into itself
+              const rect = trifoldWrapper.getBoundingClientRect();
               if (rect.width > 0 && rect.height > 0) {
                 isTilting = true;
                 trifoldWrapper.classList.add('is-tilting');
 
-                // Normalized coordinates: -0.5 to 0.5 based on exact image bounds
                 const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5));
                 const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5));
 
@@ -838,13 +836,18 @@
               resetTilt();
             }
           }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+          lastMouseX = e.clientX;
+          lastMouseY = e.clientY;
+          handlePointer(e);
         }, { passive: true });
 
+        // On scroll the page moves under a still cursor: re-check instead of hiding
         window.addEventListener('scroll', () => {
-          hideResumeBadge();
-          if (isTilting) {
-            resetTilt();
-          }
+          const target = document.elementFromPoint(lastMouseX, lastMouseY);
+          handlePointer({ clientX: lastMouseX, clientY: lastMouseY, target });
         }, { passive: true });
 
         document.addEventListener('mouseleave', () => {
@@ -854,21 +857,15 @@
           }
         });
 
-        trifoldPaper.addEventListener('click', (e) => {
-          // If clicking a link or button, don't toggle
+        // Click anywhere inside the hover zone (including the padding) toggles the CV
+        document.addEventListener('click', (e) => {
           if (e.target.closest('a') || e.target.closest('button')) return;
-          // Only trigger unfold/fold if clicking directly on the resume image
+          if (e.target.closest('#trifold-hint')) return; // hint has its own handler
           if (!isOverResumeImage(e)) return;
 
           const isUnfolded = trifoldWrapper.classList.contains('is-unfolded');
           setTrifoldState(!isUnfolded);
-          setTimeout(() => {
-            if (isOverResumeImage(e)) {
-              updateResumeBadge(e);
-            } else {
-              hideResumeBadge();
-            }
-          }, 60);
+          setTimeout(() => handlePointer(e), 60);
         });
 
         trifoldPaper.addEventListener('keydown', (e) => {

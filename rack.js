@@ -80,7 +80,7 @@
       desc: 'Editorial campaign and motion study reimagining luxury fashion storytelling through a contemporary lens.',
       tag: 'Visual identity · 3D · Fashion · 2026',
       categories: ['Visual identity', '3D', 'Fashion'],
-      image: 'works/8.PNG',
+      image: 'works/8.png',
       link: 'works/dior/dior.html',
     },
     {
@@ -89,7 +89,7 @@
       desc: 'An editorial publication revisiting the unapologetic visual language of early-2000s pop culture and teen glossies.',
       tag: 'Editorial · Fashion · 2026',
       categories: ['Editorial', 'Fashion'],
-      image: 'works/9.PNG',
+      image: 'works/9.png',
       link: 'works/LUV/LUV.html',
     },
     {
@@ -141,8 +141,8 @@
     PROJECTS[4],  // 5.png (4:23)
     PROJECTS[10], // 11.webp (Bass) — switched with 6.png on rack
     PROJECTS[6],  // 7.Webp (Mugler)
-    PROJECTS[7],  // 8.PNG (Dior)
-    PROJECTS[8],  // 9.PNG (LUV Magazine)
+    PROJECTS[7],  // 8.png (Dior)
+    PROJECTS[8],  // 9.png (LUV Magazine)
     PROJECTS[9],  // 10.png (Collage)
     PROJECTS[5],  // 6.png (PAM) — switched with 11.webp on rack
     comingSoonProject, // 4.png (Silhouette) — Coming soon...
@@ -580,33 +580,69 @@
     canvas.style.cursor = 'grab';
   });
 
-  // Touch support
+  // Touch support — on phone: tap a card to open it, rotate with arrow buttons
+  const phoneMQ = window.matchMedia('(max-width: 430px)');
   let touchStartX = 0;
-  let touchStartRotY = 0;
-  let lastTouchX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  let touchMoved = false;
 
   canvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
     touchStartX = e.touches[0].clientX;
-    touchStartRotY = rackGroup.rotation.y;
-    lastTouchX = touchStartX;
-    isDragging = true;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+    touchMoved = false;
     hideHint();
     e.preventDefault();
   }, { passive: false });
 
   canvas.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    dragDeltaX = e.touches[0].clientX - lastTouchX;
-    lastTouchX = e.touches[0].clientX;
-    const delta = e.touches[0].clientX - touchStartX;
-    rackGroup.rotation.y = touchStartRotY + delta * 0.008;
+    const t = e.touches[0];
+    if (Math.abs(t.clientX - touchStartX) > 10 || Math.abs(t.clientY - touchStartY) > 10) {
+      touchMoved = true;
+    }
     e.preventDefault();
   }, { passive: false });
 
-  canvas.addEventListener('touchend', () => {
-    isDragging = false;
-    manualRotVelocity = dragDeltaX * 0.004;
-  });
+  canvas.addEventListener('touchend', (e) => {
+    const t = e.changedTouches[0];
+    if (!t) return;
+    // Swipe left/right → step the rack one card
+    const dx = t.clientX - touchStartX;
+    if (touchMoved && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(t.clientY - touchStartY)) {
+      stepRack(dx > 0 ? -1 : 1);
+      return;
+    }
+    // Tap → open the card under the finger
+    if (!touchMoved && Date.now() - touchStartTime < 500) {
+      handleCanvasClick({ clientX: t.clientX, clientY: t.clientY });
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  // Arrow buttons: rotate one card at a time with smooth easing
+  const ROT_STEP = Math.PI / CARDS_PER_TIER; // tiers are offset, so this brings a new card to the front
+  let rotTarget = null;
+  let autoPauseUntil = 0;
+
+  function stepRack(dir) {
+    const base = rotTarget !== null ? rotTarget : rackGroup.rotation.y;
+    rotTarget = base + dir * ROT_STEP;
+    manualRotVelocity = 0;
+    autoPauseUntil = Date.now() + 5000; // hold still so the card is easy to tap
+    hideHint();
+  }
+
+  const rackPrev = document.getElementById('rack-prev');
+  const rackNext = document.getElementById('rack-next');
+  if (rackPrev) rackPrev.addEventListener('click', () => stepRack(-1));
+  if (rackNext) rackNext.addEventListener('click', () => stepRack(1));
+
+  if (phoneMQ.matches && dragHint) {
+    const span = dragHint.querySelector('span');
+    if (span) span.textContent = 'tap a card to open';
+  }
 
   // Mouse wheel / trackpad scroll spins the rack
   window.addEventListener('wheel', (e) => {
@@ -720,11 +756,18 @@
     }
     overlay.onclick = (e) => {
       const mediaEl = getActiveOverlayMedia();
-      if (proj.link && (e.target === mediaEl || cursorBadge.classList.contains('visible')) && e.target !== closeBtn) {
-        cursorBadge.classList.remove('visible');
-        document.body.classList.add('page-exit');
-        setTimeout(() => { window.location.href = proj.link; }, 520);
+      if (e.target === closeBtn) return;
+      const onMedia = e.target === mediaEl || cursorBadge.classList.contains('visible');
+      if (onMedia) {
+        if (proj.link) {
+          cursorBadge.classList.remove('visible');
+          document.body.classList.add('page-exit');
+          setTimeout(() => { window.location.href = proj.link; }, 520);
+        }
+        return;
       }
+      // Clicked anywhere that isn't the image/video → close
+      closeOverlay();
     };
     overlayTitle.textContent = proj.title;
     overlayDesc.textContent = proj.desc;
@@ -847,7 +890,16 @@
   function animate() {
     requestAnimationFrame(animate);
 
-    if (!isDragging) {
+    if (rotTarget !== null) {
+      const diff = rotTarget - rackGroup.rotation.y;
+      rackGroup.rotation.y += diff * 0.12;
+      if (Math.abs(diff) < 0.001) {
+        rackGroup.rotation.y = rotTarget;
+        rotTarget = null;
+      }
+    } else if (Date.now() < autoPauseUntil) {
+      // paused after a phone arrow/swipe step
+    } else if (!isDragging) {
       if (Math.abs(manualRotVelocity) > 0.0001) {
         rackGroup.rotation.y += manualRotVelocity;
         manualRotVelocity *= 0.94;

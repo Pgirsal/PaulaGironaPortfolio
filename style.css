@@ -223,6 +223,11 @@ body {
   font-weight: 300;
 }
 
+/* Phone-only rack rotation arrows (hidden on larger screens) */
+.rack-controls {
+  display: none;
+}
+
 /* =============================================
    WORK ARCHIVE GRID VIEW
    ============================================= */
@@ -489,8 +494,8 @@ body.page-exit #main-nav {
   pointer-events: none;
   z-index: 230;
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.75);
-  transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate(-50%, -50%) scale(0.15);
+  transition: opacity 0.35s ease, transform 0.6s cubic-bezier(0.34, 1.25, 0.64, 1);
 }
 
 .cursor-badge.visible {
@@ -607,7 +612,7 @@ body.page-exit #main-nav {
 /* =============================================
    RESPONSIVE
    ============================================= */
-@media (max-width: 768px) {
+@media (max-width: 430px) {
   #main-nav {
     padding: 0 2rem;
   }
@@ -637,6 +642,48 @@ body.page-exit #main-nav {
 
   .brand-label {
     display: none;
+  }
+
+  #rack-canvas {
+    touch-action: none;
+  }
+
+  .drag-hint {
+    bottom: 7.6rem;
+  }
+
+  .rack-controls {
+    display: flex;
+    position: fixed;
+    left: 50%;
+    bottom: 2.4rem;
+    transform: translateX(-50%);
+    gap: 3.2rem;
+    z-index: 20;
+  }
+
+  .rack-arrow {
+    width: 4.4rem;
+    height: 4.4rem;
+    border-radius: 50%;
+    border: 1px solid var(--ink-faint);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .rack-arrow:active {
+    transform: scale(0.92);
+    background: var(--ink);
+    color: var(--white);
   }
 
   .work-archive {
@@ -717,7 +764,7 @@ body.page-exit #main-nav {
   }
 }
 
-@media (max-width: 1100px) and (min-width: 769px) {
+@media (max-width: 1100px) and (min-width: 431px) {
   .work-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 4.4rem 2.6rem;
